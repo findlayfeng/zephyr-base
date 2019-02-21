@@ -1,35 +1,36 @@
 FROM archlinux/base
 
-ARG ZEPHYR_VER=1.14.0-rc1
-ARG ZEPHYR_URL=https://codeload.github.com/zephyrproject-rtos/zephyr/tar.gz/v${ZEPHYR_VER}
-ARG ZEPHYR_PATH=/usr/share
+ARG ZEPHYR_VER=master
+ARG ZEPHYR_URL=https://github.com/zephyrproject-rtos/zephyr.git
+ARG ZEPHYR_PROJECT_PATH=/zephyrproject
 ARG PYPI_URL=https://pypi.org
-ARG WORKDIR=/app
+ARG WORKDIR=${ZEPHYR_PROJECT_PATH}
 
 WORKDIR ${WORKDIR}
 
 ENV LANG=en_US.UTF-8 \
     ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb \
     GNUARMEMB_TOOLCHAIN_PATH=/usr/ \
-    ZEPHYR_BASE=${ZEPHYR_PATH}/zephyr \
-    BOARD_ROOT=${ZEPHYR_PATH} \
+    BOARD_ROOT=${ZEPHYR_PROJECT_PATH} \
     XDG_CACHE_HOME=/cache
 
 VOLUME [ "${XDG_CACHE_HOME}/zephyr" ]
 RUN mkdir -p ${BOARD_ROOT}/boards && mkdir -p ${WORKDIR}
 
 RUN pacman --noconfirm -Sy --needed arm-none-eabi-gcc arm-none-eabi-newlib \
-    python python-pip dtc gperf cmake make ninja tar \
-    && rm -rf \
+    python dtc gperf cmake make ninja git &&\
+    rm -rf \
     /usr/share/man/* \
     /var/cache/pacman/pkg/* \
     /var/lib/pacman/sync/* \
     /etc/pacman.d/mirrorlist.pacnew
 
-RUN curl ${ZEPHYR_URL} -o /tmp/zephyr-${ZEPHYR_VER} && \
-    tar -xvf /tmp/zephyr-${ZEPHYR_VER} -C /tmp && \
-    mv /tmp/zephyr-${ZEPHYR_VER} ${ZEPHYR_PATH}/zephyr
+RUN curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && \
+    python /tmp/get-pip.py && \
+    rm /tmp/get-pip.py
 
-RUN pip install -i ${PYPI_URL}/simple/ --no-cache-dir --upgrade pip \
-    && pip install -i ${PYPI_URL}/simple/ --no-cache-dir \
-    -r ${ZEPHYR_PATH}/zephyr/scripts/requirements.txt
+RUN pip install -i ${PYPI_URL}/simple/ --no-cache-dir west && \
+    west init -m ${ZEPHYR_URL} --mr ${ZEPHYR_VER} ${ZEPHYR_PROJECT_PATH} && \
+    pip install -i ${PYPI_URL}/simple/ --no-cache-dir \
+    -r ${ZEPHYR_PROJECT_PATH}/zephyr/scripts/requirements.txt && \
+    source ${ZEPHYR_PROJECT_PATH}/zephyr/zephyr-env.sh
