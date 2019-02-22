@@ -48,3 +48,5 @@ RUN pacman --noconfirm -Sy --needed distcc \
     /etc/pacman.d/mirrorlist.pacnew
 
 CMD distccd --daemon --jobs=${DISTCCD_JOBS} --user=${DISTCCD_USER} --allow=${DISTCCD_ALLOW} --verbose --no-detach
+
+ENTRYPOINT ["sh", "-c"]

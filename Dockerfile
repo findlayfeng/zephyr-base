@@ -34,3 +34,5 @@ RUN pip install -i ${PYPI_URL}/simple/ --no-cache-dir west && \
     pip install -i ${PYPI_URL}/simple/ --no-cache-dir \
     -r ${ZEPHYR_PROJECT_PATH}/zephyr/scripts/requirements.txt && \
     source ${ZEPHYR_PROJECT_PATH}/zephyr/zephyr-env.sh
+
+ENTRYPOINT west
