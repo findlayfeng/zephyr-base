@@ -18,7 +18,7 @@ VOLUME [ "${XDG_CACHE_HOME}/zephyr" ]
 RUN mkdir -p ${BOARD_ROOT}/boards && mkdir -p ${WORKDIR}
 
 RUN pacman --noconfirm -Sy --needed arm-none-eabi-gcc arm-none-eabi-newlib \
-    python dtc gperf cmake make ninja git &&\
+    python dtc gperf cmake make ninja git qemu qemu-arch-extra &&\
     rm -rf \
     /usr/share/man/* \
     /var/cache/pacman/pkg/* \

@@ -6,6 +6,6 @@ ENV DISTCCD_USER=nobody \
 
 EXPOSE 3632
 
-CMD [ "--daemon", "--jobs=${DISTCCD_JOBS}", "--user=${DISTCCD_USER}", "--allow=${DISTCCD_ALLOW}", "--verbose", "--no-detach" ]
+ENTRYPOINT [ "" ]
 
-ENTRYPOINT [ "distccd" ]
+CMD distccd --daemon --jobs=${DISTCCD_JOBS} --user=${DISTCCD_USER} --allow=${DISTCCD_ALLOW} --verbose --no-detach
