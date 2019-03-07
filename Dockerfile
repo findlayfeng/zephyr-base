@@ -9,6 +9,7 @@ ARG WORKDIR=${ZEPHYR_PROJECT_PATH}
 WORKDIR ${WORKDIR}
 
 ENV LANG=en_US.UTF-8 \
+    ZEPHYR_BASE=${ZEPHYR_PROJECT_PATH}/zephyr \
     ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb \
     GNUARMEMB_TOOLCHAIN_PATH=/usr/ \
     BOARD_ROOT=${ZEPHYR_PROJECT_PATH} \
@@ -33,6 +34,6 @@ RUN pip install -i ${PYPI_URL}/simple/ --no-cache-dir west && \
     west init -m ${ZEPHYR_URL} --mr ${ZEPHYR_VER} ${ZEPHYR_PROJECT_PATH} && \
     pip install -i ${PYPI_URL}/simple/ --no-cache-dir \
     -r ${ZEPHYR_PROJECT_PATH}/zephyr/scripts/requirements.txt && \
-    source ${ZEPHYR_PROJECT_PATH}/zephyr/zephyr-env.sh
+    ln -s ${ZEPHYR_BASE}/scripts/sanitycheck /usr/bin/
 
 ENTRYPOINT [ "west" ]
