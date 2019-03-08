@@ -1,4 +1,4 @@
-FROM archlinux/base
+FROM fengch/archlinux-aur
 
 ARG ZEPHYR_VER=master
 ARG ZEPHYR_URL=https://github.com/zephyrproject-rtos/zephyr.git
@@ -12,15 +12,14 @@ ENV LANG=en_US.UTF-8 \
     ZEPHYR_BASE=${ZEPHYR_PROJECT_PATH}/zephyr \
     ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb \
     GNUARMEMB_TOOLCHAIN_PATH=/usr/ \
-    BOARD_ROOT=${ZEPHYR_PROJECT_PATH} \
-    XDG_CACHE_HOME=/cache
+    BOARD_ROOT=${ZEPHYR_PROJECT_PATH}
 
-VOLUME [ "${XDG_CACHE_HOME}/zephyr" ]
-RUN mkdir -p ${BOARD_ROOT}/boards && mkdir -p ${WORKDIR}
+RUN mkdir -p ${BOARD_ROOT}/boards && \
+    mkdir -p ${WORKDIR}
 
-RUN pacman --noconfirm -Sy --needed arm-none-eabi-gcc arm-none-eabi-newlib \
-    python dtc gperf cmake make ninja git qemu qemu-arch-extra &&\
+RUN su docker -c 'yay -Sy --noprogressbar --needed --noconfirm arm-none-eabi-gcc arm-none-eabi-newlib python dtc gperf cmake ninja qemu qemu-arch-extra nrf5x-command-line-tools' &&\
     rm -rf \
+    /home/* \
     /usr/share/man/* \
     /var/cache/pacman/pkg/* \
     /var/lib/pacman/sync/* \
